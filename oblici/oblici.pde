@@ -1,38 +1,34 @@
 import java.util.ArrayList;
 class Oblici{
-  float startX, startY; // Varijable za pohranu početnih koordinata kvadrata
+  float startX, startY;
   float endX, endY;
   float udalj, srceSize;
   float udaljX, udaljY;
-  float Radijus, Broj = 5;
+  float Radijus, PRadius;
   float centarX, centarY;
   float X1, X2, X3, Y1, Y2, Y3;
   float RX1, RX2, RX3, RX4, RY1, RY2, RY3, RY4;
   
-
   int mouseHeld = 0;
-  int oblikCrtaj = 6;
+  int oblikCrtaj = 4;
   
-  ArrayList<float[]> pravokutnici = new ArrayList<float[]>();
-  ArrayList<float[]> krugovi = new ArrayList<float[]>();
-  ArrayList<float[]> srca = new ArrayList<float[]>();
-  ArrayList<float[]> zvijezde = new ArrayList<float[]>();
-  ArrayList<float[]> trokuti = new ArrayList<float[]>();
-  ArrayList<float[]> rombovi = new ArrayList<float[]>();
-  
+  ArrayList<float[]> pravokutnici = new ArrayList<float[]>();  // oblik 1
+  ArrayList<float[]> krugovi = new ArrayList<float[]>();       // oblik 2
+  ArrayList<float[]> srca = new ArrayList<float[]>();          // oblik 3
+  ArrayList<float[]> zvijezde = new ArrayList<float[]>();      // oblik 4
+  ArrayList<float[]> trokuti = new ArrayList<float[]>();       // oblik 5
+  ArrayList<float[]> rombovi = new ArrayList<float[]>();       // oblik 6
+  ArrayList<float[]> linije = new ArrayList<float[]>();        // oblik 7
+  ArrayList<float[]> peterokuti = new ArrayList<float[]>();    // oblik 8
+  ArrayList<float[]> cetriZvijezde = new ArrayList<float[]>(); // oblik 9
+  ArrayList<float[]> sestZvijezde = new ArrayList<float[]>();  // oblik 10
   
   Oblici(){
   }
+  
   void iscrtaj(){
     stroke(0); // Postavljamo boju linije na crnu
     strokeWeight(2); 
-    
-  //oblik 1 --> pravokutnik
-  //oblik 2 --> krug
-  //oblik 3 --> srce
-  //oblik 4 --> zvijezda
-  //oblik 5 --> trokut
-  //oblik 6 --> romb 
   
   for (float[] pravokutnik : pravokutnici) {
       float x = pravokutnik[0];
@@ -58,8 +54,7 @@ class Oblici{
       float x = zvijezda[0];
       float y = zvijezda[1];
       float c = zvijezda[2];
-      float d = zvijezda[3];
-      nacrtajZvijezdu(x, y, c, d); 
+      nacrtajZvijezdu(x, y, c); 
     }
     
       for (float[] trokut : trokuti) {
@@ -83,6 +78,20 @@ class Oblici{
       float y4 = romb[7];
       quad(x1, y1, x2, y2, x3, y3, x4, y4); 
     }
+     for (float[] linija : linije) {
+      float x1 = linija[0];
+      float y1 = linija[1];
+      float x2 = linija[2];
+      float y2 = linija[3];
+      line(x1, y1, x2, y2);
+    }
+    
+      for (float[] peterokut : peterokuti) {
+      float x1 = peterokut[0];
+      float y1 = peterokut[1];
+      float r = peterokut[2];
+      nacrtajPeterokut(x1, y1, r);
+    }
   }
   void dodajOblik() {
       if( mouseHeld == 2  && oblikCrtaj == 1){
@@ -102,7 +111,7 @@ class Oblici{
   }
        if( mouseHeld == 2  && oblikCrtaj == 4){
         mouseHeld = 0;
-        float a[] = {centarX, centarY, Radijus, Broj};
+        float a[] = {centarX, centarY, Radijus};
         zvijezde.add(a);
   }
          if( mouseHeld == 2  && oblikCrtaj == 5){
@@ -114,6 +123,26 @@ class Oblici{
         mouseHeld = 0;
         float a[] = { RX1, RY1, RX2, RY2, RX3, RY3, RX4, RY4};
         rombovi.add(a);
+  }
+        if( mouseHeld == 2  && oblikCrtaj == 7){
+        mouseHeld = 0;
+        float a[] = { startX, startY, endX + startX, endY + startY};
+        linije.add(a);
+  }
+       if( mouseHeld == 2  && oblikCrtaj == 8){
+        mouseHeld = 0;
+        float a[] = { centarX, centarY, PRadius};
+        peterokuti.add(a);
+  }
+       if( mouseHeld == 2  && oblikCrtaj == 9){
+        mouseHeld = 0;
+        float a[] = { centarX, centarY, PRadius};
+        cetriZvijezde.add(a);
+  }
+       if( mouseHeld == 2  && oblikCrtaj == 10){
+        mouseHeld = 0;
+        float a[] = { centarX, centarY, PRadius};
+        sestZvijezde.add(a);
   }
  }
    void nacrtajSrce(float a, float b, float c)
@@ -131,9 +160,9 @@ class Oblici{
     endShape();
   }
   
-  void nacrtajZvijezdu(float cx, float cy, float R, float B)
+  void nacrtajZvijezdu(float cx, float cy, float R)
   {
-      int numPoints = (int)B; // Broj vrhova zvijezde
+      int numPoints = 5; // Broj vrhova zvijezde
       float angle = TWO_PI / numPoints; // Kut između svakog vrha
       
       beginShape();
@@ -146,6 +175,20 @@ class Oblici{
       }
       endShape(CLOSE);
   }
+  
+  void nacrtajPeterokut(float cx, float cy, float radius)
+  {
+      int numPoints = 5; 
+      beginShape();
+      for (int i = 0; i < numPoints; i++) {
+        float angle = TWO_PI / numPoints * i; // Kut između svakog vrha
+        float x = cx + cos(angle + 60) * radius; // X koordinata vrha
+        float y = cy + sin(angle + 60) * radius; // Y koordinata vrha
+        vertex(x, y); // Dodavanje vrha u oblik
+      }
+      endShape(CLOSE);
+    
+  }
 
 
   void mousePressed() {
@@ -155,24 +198,24 @@ class Oblici{
 }
 void mouseReleased() {
   
-  // ----- za pravokutnik -------------------------------
+  // ----------------- za pravokutnik -------------------------------------
   endX = mouseX - startX;
   endY = mouseY - startY;
 
- //------- za krug --------------------------------------
+ //------------------- za krug --------------------------------------------
   udalj = dist(startX, startY, mouseX, mouseY);
   
- //------- za srce --------------------------------------
+ //-------------------- za srce --------------------------------------------
   udaljX = startX + dist(startX, startY, mouseX, mouseY);
   udaljY = startY + dist(startX, startY, mouseX, mouseY);
   srceSize = dist(startX, startY, udaljX, udaljY);
   
- //------ za zvijezdu ---------------------------------- 
+ //-------------------- za zvijezdu -----------------------------------------
  centarX = startX + endX/2;
- centarY = startY + endY/2;
+ centarY = startY + endY/2; 
  Radijus = startX < mouseX ? dist(startX, startY, udaljX, udaljY) - 30 : 0;
  
- //------- za trokut ------------------------------------
+ //-------------------- za trokut -------------------------------------------
  X1 = startX ;
  Y1 = mouseY;
  X2 = startX + (mouseX - startX)/2;
@@ -180,7 +223,7 @@ void mouseReleased() {
  X3 = mouseX;
  Y3 = mouseY;
  
- //--------za romb ------------------------------------
+ //-------------------- za romb ---------------------------------------------
  RX1 = startX;
  RY1 = startY + (mouseY - startY)/2;
  RX2 = startX + (mouseX - startX)/2;
@@ -189,6 +232,12 @@ void mouseReleased() {
  RY3 = startY + (mouseY - startY)/2;
  RX4 = startX + (mouseX - startX)/2;
  RY4 = startY;
+ 
+ //------------------- za peterokut ----------------------------------------
+ PRadius = dist(centarX, centarY, startX , startY);
+ 
+ //------------------- za 4 kraku zvijezdu --------------------------------
+
  
  //------------------------------------------------------
     
